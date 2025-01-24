@@ -33,12 +33,12 @@ import com.cromulent.cartio.ui.theme.CartioTheme
 @Composable
 fun ItemInput(
     modifier: Modifier = Modifier,
-    onAddClicked: () -> Unit
+    onAddClicked: (name: String, quantity: String) -> Unit
 ) {
 
     val colors = object {
-        val background = Color.White
-        val container = Color(0xFFF3F4F6)
+        val background = Color.Transparent
+        val container = Color(0xFFE8E8EA)
         val text = Color(0xFF111827)
         val placeholder = Color(0xFF6B7280)
         val primary = Color(0xFF16A34A)
@@ -52,7 +52,7 @@ fun ItemInput(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = colors.background)
+            .background(Color.Transparent)
     ) {
 
         Row(
@@ -97,7 +97,10 @@ fun ItemInput(
 
             Button(
                 onClick = {
-                    onAddClicked()
+                    onAddClicked(
+                        shopItemText,
+                        quantityText
+                    )
                     shopItemText = ""
                     quantityText = ""
                     showQuantity = false
@@ -114,7 +117,7 @@ fun ItemInput(
             ) {
                 Icon(
                     Icons.Default.Add, null,
-                    tint = colors.background
+                    tint = Color.White
                 )
             }
         }
@@ -150,6 +153,6 @@ fun ItemInput(
 @Composable
 private fun ItemInputPrev() {
     CartioTheme {
-        ItemInput() {}
+        ItemInput() {_,_ ->}
     }
 }
