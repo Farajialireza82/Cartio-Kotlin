@@ -45,7 +45,6 @@ class ListPageViewModel(private val shopRepositoryImpl: ShopRepositoryImpl) : Vi
     }
 
     fun editShopItem(shopItem: ShopItem) {
-        val oldShopItem = _state.value.shopItems.find { it.id == shopItem.id }
         viewModelScope.launch {
             shopRepositoryImpl.editShopItem(shopItem).fold(
                 onSuccess = {

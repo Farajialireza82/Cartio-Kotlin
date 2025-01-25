@@ -14,9 +14,14 @@ class ShopRepositoryImpl(
         }
     }
 
-    override suspend fun addShopItem(shopItem: ShopItem): Result<Unit> {
+    override suspend fun addShopItem(shopItem: ShopItem): Result<Long> {
         return runCatching {
-            shopApi.addShopItem(shopItem)
+            val response = shopApi.addShopItem(shopItem)
+            // Extract ID from Location header
+            val locationHeader = response.headers["Location"]
+            locationHeader?.let { location ->
+                location.split("/").last().toLong()
+            } ?: throw IllegalStateException("No ID returned from server")
         }
     }
 
