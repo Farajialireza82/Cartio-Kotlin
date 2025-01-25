@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,8 +19,10 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,6 +45,7 @@ fun ShopItemRow(
     shopItem: ShopItem,
     modifier: Modifier = Modifier,
     onItemChanged: (shopItem: ShopItem) -> Unit,
+    onDeleteClicked: (itemId: Long?) -> Unit
 ) {
     var isChecked by remember { mutableStateOf(shopItem.isBought) }
 
@@ -61,36 +65,51 @@ fun ShopItemRow(
                 .fillMaxWidth()
                 .height(64.dp)
                 .background(color = Color.White),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            RoundedCornerCheckbox(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 8.dp),
-                isChecked = isChecked,
-                checkedColor = colors.primary,
-                uncheckedBorderColor = Color(0xFF9CA3AF)
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                isChecked = !isChecked
-                shopItem.isBought = !shopItem.isBought
-                onItemChanged(shopItem.copy())
-            }
-            Text(
-                shopItem.name,
-                fontSize = 18.sp,
-                color = if (isChecked) Color(0xFF9CA3AF) else Color(0xFF111827),
-                textDecoration = if (isChecked) TextDecoration.LineThrough else null
-            )
-            if(shopItem.amount != "0"){
-                Text(
-                    shopItem.amount.toString(),
-                    fontSize = 12.sp,
-                    color = Color(0xFF4B5563),
+                RoundedCornerCheckbox(
                     modifier = Modifier
-                        .padding(horizontal = 8.dp)
+                        .padding(start = 16.dp, end = 8.dp),
+                    isChecked = isChecked,
+                    checkedColor = colors.primary,
+                    uncheckedBorderColor = Color(0xFF9CA3AF)
+                ) {
+                    isChecked = !isChecked
+                    shopItem.isBought = !shopItem.isBought
+                    onItemChanged(shopItem.copy())
+                }
+                Text(
+                    shopItem.name,
+                    fontSize = 18.sp,
+                    color = if (isChecked) Color(0xFF9CA3AF) else Color(0xFF111827),
+                    textDecoration = if (isChecked) TextDecoration.LineThrough else null
+                )
+                if (shopItem.amount != "0" && !shopItem.amount.isNullOrEmpty()) {
+                    Text(
+                        shopItem.amount.toString(),
+                        fontSize = 12.sp,
+                        color = Color(0xFF4B5563),
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                    )
+                }
+            }
+            IconButton(
+                onClick = { onDeleteClicked(shopItem.id) }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = Color(0xFFE75959),
+                    modifier = Modifier
+                        .padding(end = 16.dp)
                 )
             }
         }
-        HorizontalDivider()
     }
 
 }
@@ -156,7 +175,8 @@ fun RoundedCornerCheckbox(
 @Composable
 private fun ShopItemRowPrev() {
     ShopItemRow(
-        shopItem = ShopItem(12L, "Bread", "2 Loaves", isBought = true)
+        shopItem = ShopItem(12L, "Bread", "2 Loaves", isBought = true),
+        onItemChanged = {}
     ) { _ ->
 
     }

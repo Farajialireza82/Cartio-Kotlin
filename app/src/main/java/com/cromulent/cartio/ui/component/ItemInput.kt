@@ -25,6 +25,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,6 +35,7 @@ import com.cromulent.cartio.ui.theme.CartioTheme
 @Composable
 fun ItemInput(
     modifier: Modifier = Modifier,
+    textFieldModifier: Modifier = Modifier,
     onAddClicked: (name: String, quantity: String) -> Unit
 ) {
 
@@ -122,12 +125,12 @@ fun ItemInput(
             }
         }
 
-            AnimatedVisibility(showQuantity) {
+        AnimatedVisibility(showQuantity) {
 
             TextField(
                 value = quantityText,
                 onValueChange = { quantityText = it },
-                modifier = Modifier
+                modifier = textFieldModifier
                     .height(54.dp)
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -153,6 +156,7 @@ fun ItemInput(
 @Composable
 private fun ItemInputPrev() {
     CartioTheme {
-        ItemInput() {_,_ ->}
+        val focusRequester = remember { FocusRequester() }
+        ItemInput { _, _ -> }
     }
 }

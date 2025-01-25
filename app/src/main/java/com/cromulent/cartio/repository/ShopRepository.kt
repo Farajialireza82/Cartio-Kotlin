@@ -9,6 +9,8 @@ interface ShopRepository {
 
     suspend fun editShopItem(shopItem: ShopItem): Result<Unit>
 
+    suspend fun deleteShopItem(id: Long?): Result<Unit>
+
 
 
 }
