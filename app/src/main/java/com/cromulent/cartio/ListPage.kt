@@ -97,7 +97,10 @@ fun ListPage(
                 onDeleteClicked = {
                     showConfirmDialog = true
                 },
-                onMarkAsBoughtClicked = { },
+                onMarkAsBoughtClicked = {
+                    viewModel.markSelectedAsBought(state.selectedItems)
+                    viewModel.clearItems()
+                },
                 onClearClicked = { viewModel.clearItems() },
                 onShareClicked = {
                     val shareText = viewModel.createShareText()
@@ -154,8 +157,8 @@ fun ListPage(
                         state = rememberLazyListState()
                     ) {
                         items(
-                            items = state.shopItems.sortedBy { it.isBought },
-                            key = { it.id ?: it.hashCode() },
+                            items = state.shopItems,
+                            key = { "${it.id}${it.isBought}" },
                         ) { item ->
                             AnimatedShopItem(
                                 modifier = Modifier
@@ -174,7 +177,7 @@ fun ListPage(
                                             0x6616A34A
                                         ) else Color.White
                                     ),
-
+                                showDivider = state.shopItems.last() != item,
 
                                 item = item,
 
@@ -223,6 +226,7 @@ fun ListPage(
 private fun AnimatedShopItem(
     modifier: Modifier = Modifier,
     item: ShopItem,
+    showDivider: Boolean = true,
     onItemChanged: (ShopItem) -> Unit,
     onDeleteClicked: (Long?) -> Unit,
     isSelectionMode: Boolean
@@ -266,7 +270,7 @@ private fun AnimatedShopItem(
                     }
                 }
             )
-            if (!item.isBought) {
+            if (showDivider) {
                 HorizontalDivider(
                     modifier = Modifier.alpha(0.4f),
                     color = Color.LightGray

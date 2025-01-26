@@ -43,4 +43,10 @@ class ShopRepositoryImpl(
         }
     }
 
+    override suspend fun markAsBought(ids: List<Long>?): Result<Unit> {
+        return runCatching {
+            shopApi.markAsBought(ids)
+        }
+    }
+
 }

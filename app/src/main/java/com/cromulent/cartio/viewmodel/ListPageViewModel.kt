@@ -26,9 +26,7 @@ class ListPageViewModel(private val shopRepositoryImpl: ShopRepositoryImpl) : Vi
             shopRepositoryImpl.getAllShopItems().fold(
                 onSuccess = { shopItems ->
                     _state.update {
-                        it.copy(shopItems = shopItems.map { item ->
-                            it.shopItems.find { existing -> existing.id == item.id } ?: item
-                        })
+                        it.copy(shopItems = shopItems)
                     }
                 }, onFailure = {
                     Log.e(TAG, "loadItems: $it ")
@@ -138,12 +136,38 @@ class ListPageViewModel(private val shopRepositoryImpl: ShopRepositoryImpl) : Vi
     fun createShareText(): String {
         val toShareList = state.value.selectedItems.ifEmpty { state.value.shopItems }
 
-        return "Hey. Please buy these items:\n" + toShareList.joinToString("\n") { item ->
+        val toBuyItems = toShareList.filter { !it.isBought }
+        val boughtItems = toShareList.filter { it.isBought }
+
+        var shareText = "Hey. Please buy these items:\n" + toBuyItems.joinToString("\n") { item ->
             if (item.amount.isNullOrEmpty()) {
                 "• ${item.name}"
             } else {
                 "• ${item.name} (${item.amount})"
             }
+        }
+        if (boughtItems.isNotEmpty()) {
+            shareText += "\n bought items:\n" + boughtItems.joinToString("\n") { item ->
+                if (item.amount.isNullOrEmpty()) {
+                    "• ${item.name}"
+                } else {
+                    "• ${item.name} (${item.amount})"
+                }
+            }
+        }
+        return shareText
+    }
+
+    fun markSelectedAsBought(boughtItems: List<ShopItem>) {
+        val boughtIds = boughtItems.map { it.id!! }
+        viewModelScope.launch {
+            shopRepositoryImpl.markAsBought(boughtIds).fold(
+                onSuccess = {
+                    loadItems()
+                }, onFailure = {
+                    Log.e(TAG, "markSelectedAsBought: $it")
+                }
+            )
         }
     }
 }

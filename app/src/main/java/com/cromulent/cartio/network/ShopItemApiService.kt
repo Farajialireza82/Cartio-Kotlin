@@ -37,11 +37,18 @@ class ShopItemApiService(private val client: HttpClient) {
     }
 
     suspend fun deleteShopItem(id: Long?) {
-        client.delete(urlString = END_POINT + id)
+        client.delete(urlString = END_POINT + "/$id")
     }
 
     suspend fun deleteShopItems(ids: List<Long>?) {
         client.post(urlString = END_POINT + "/delete") {
+            contentType(ContentType.Application.Json)
+            setBody(ids)
+        }
+    }
+
+    suspend fun markAsBought(ids: List<Long>?){
+        client.post(urlString = END_POINT + "/markBought") {
             contentType(ContentType.Application.Json)
             setBody(ids)
         }
