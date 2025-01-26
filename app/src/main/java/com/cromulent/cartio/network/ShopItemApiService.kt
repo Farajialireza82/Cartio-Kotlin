@@ -17,26 +17,33 @@ import io.ktor.http.contentType
 class ShopItemApiService(private val client: HttpClient) {
 
     companion object {
-        private const val END_POINT = "http://10.0.0.34:8080/"
+        private const val END_POINT = "http://10.0.0.34:8080/shopItems"
     }
 
-    suspend fun getAllShopItems() = client.get(END_POINT + "shopItems")
+    suspend fun getAllShopItems() = client.get(END_POINT)
 
     suspend fun addShopItem(shopItem: ShopItem): HttpResponse {
-        return client.post(urlString = END_POINT + "shopItems") {
+        return client.post(urlString = END_POINT) {
             contentType(ContentType.Application.Json)
             setBody(shopItem)
         }
     }
 
     suspend fun editShopItem(shopItem: ShopItem) {
-        client.put(urlString = END_POINT + "shopItems") {
+        client.put(urlString = END_POINT) {
             contentType(ContentType.Application.Json)
             setBody(shopItem)
         }
     }
 
     suspend fun deleteShopItem(id: Long?) {
-        client.delete(urlString = END_POINT + "shopItems/$id")
+        client.delete(urlString = END_POINT + id)
+    }
+
+    suspend fun deleteShopItems(ids: List<Long>?) {
+        client.post(urlString = END_POINT + "/delete") {
+            contentType(ContentType.Application.Json)
+            setBody(ids)
+        }
     }
 }

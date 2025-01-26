@@ -1,5 +1,6 @@
 package com.cromulent.cartio.ui.component
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
@@ -42,8 +43,9 @@ import com.cromulent.cartio.data.ShopItem
 
 @Composable
 fun ShopItemRow(
-    shopItem: ShopItem,
     modifier: Modifier = Modifier,
+    shopItem: ShopItem,
+    isSelectionMode: Boolean = false,
     onItemChanged: (shopItem: ShopItem) -> Unit,
     onDeleteClicked: (itemId: Long?) -> Unit
 ) {
@@ -63,25 +65,29 @@ fun ShopItemRow(
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .height(64.dp)
-                .background(color = Color.White),
+                .padding(start = 16.dp)
+                .height(64.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RoundedCornerCheckbox(
-                    modifier = Modifier
-                        .padding(start = 16.dp, end = 8.dp),
-                    isChecked = isChecked,
-                    checkedColor = colors.primary,
-                    uncheckedBorderColor = Color(0xFF9CA3AF)
-                ) {
-                    isChecked = !isChecked
-                    shopItem.isBought = !shopItem.isBought
-                    onItemChanged(shopItem.copy())
+
+                androidx.compose.animation.AnimatedVisibility(!isSelectionMode) {
+                    RoundedCornerCheckbox(
+                        modifier = Modifier
+                            .padding(end = 8.dp),
+                        isChecked = isChecked,
+                        checkedColor = colors.primary,
+                        uncheckedBorderColor = Color(0xFF9CA3AF)
+                    ) {
+                        isChecked = !isChecked
+                        shopItem.isBought = !shopItem.isBought
+                        onItemChanged(shopItem.copy())
+                    }
                 }
+
                 Text(
                     shopItem.name,
                     fontSize = 18.sp,
@@ -98,16 +104,18 @@ fun ShopItemRow(
                     )
                 }
             }
-            IconButton(
-                onClick = { onDeleteClicked(shopItem.id) }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null,
-                    tint = Color(0xFFE75959),
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                )
+            androidx.compose.animation.AnimatedVisibility(!isSelectionMode) {
+                IconButton(
+                    onClick = { onDeleteClicked(shopItem.id) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = null,
+                        tint = Color(0xFFE75959),
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                    )
+                }
             }
         }
     }

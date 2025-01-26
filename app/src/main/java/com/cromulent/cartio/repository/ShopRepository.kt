@@ -11,6 +11,5 @@ interface ShopRepository {
 
     suspend fun deleteShopItem(id: Long?): Result<Unit>
 
-
-
+    suspend fun deleteShopItems(ids: List<Long>?): Result<Unit>
 }

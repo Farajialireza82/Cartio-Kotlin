@@ -37,4 +37,10 @@ class ShopRepositoryImpl(
         }
     }
 
+    override suspend fun deleteShopItems(ids: List<Long>?): Result<Unit> {
+        return runCatching {
+            shopApi.deleteShopItems(ids)
+        }
+    }
+
 }

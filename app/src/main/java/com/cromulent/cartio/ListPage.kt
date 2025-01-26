@@ -1,8 +1,7 @@
 package com.cromulent.cartio
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -12,13 +11,14 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -41,28 +42,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cromulent.cartio.data.ShopItem
+import com.cromulent.cartio.state.ListPageUiMode
 import com.cromulent.cartio.ui.component.ItemInput
 import com.cromulent.cartio.ui.component.ListEmptyState
 import com.cromulent.cartio.ui.component.ListPageTopBar
 import com.cromulent.cartio.ui.component.ShopItemRow
+import com.cromulent.cartio.ui.component.dialog.ConfirmDialog
+import com.cromulent.cartio.utils.getItemsText
 import com.cromulent.cartio.viewmodel.ListPageViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.time.delay
 import org.koin.androidx.compose.koinViewModel
 import java.time.Duration
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ListPage(
     modifier: Modifier = Modifier
-        .imePadding()
-    ,
+        .imePadding(),
     viewModel: ListPageViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
+
+
+    var showConfirmDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.loadItems()
@@ -80,7 +89,29 @@ fun ListPage(
                 )
             ),
         containerColor = Color.Transparent,
-        topBar = { ListPageTopBar(shopItemCount = state.shopItems.size) }
+        topBar = {
+            ListPageTopBar(
+                title = "Household Groceries",
+                shopItemCount = state.shopItems.size,
+                selectedItemCount = state.selectedItems.size,
+                onDeleteClicked = {
+                    showConfirmDialog = true
+                },
+                onMarkAsBoughtClicked = { },
+                onClearClicked = { viewModel.clearItems() },
+                onShareClicked = {
+                    val shareText = viewModel.createShareText()
+                    val sendIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, shareText)
+                        type = "text/plain"
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, null)
+                    context.startActivity(shareIntent)
+                    viewModel.clearItems()
+                }
+            )
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -118,7 +149,8 @@ fun ListPage(
                     exit = fadeOut() + slideOutVertically()
                 ) {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize(),
                         state = rememberLazyListState()
                     ) {
                         items(
@@ -126,13 +158,31 @@ fun ListPage(
                             key = { it.id ?: it.hashCode() },
                         ) { item ->
                             AnimatedShopItem(
+                                modifier = Modifier
+                                    .combinedClickable(
+                                        onClick = {
+                                            if (state.uiMode == ListPageUiMode.SELECTING) {
+                                                viewModel.toggleSelected(item)
+                                            }
+                                        },
+                                        onLongClick = {
+                                            viewModel.toggleSelected(item)
+                                        }
+                                    )
+                                    .background(
+                                        color = if (state.selectedItems.contains(item)) Color(
+                                            0x6616A34A
+                                        ) else Color.White
+                                    ),
+
+
                                 item = item,
-                                onItemChanged = { shopItem ->
-                                    viewModel.editShopItem(shopItem)
-                                },
-                                onDeleteClicked = { id ->
-                                    viewModel.deleteShopItem(id)
-                                }
+
+                                onItemChanged = { viewModel.editShopItem(it) },
+
+                                onDeleteClicked = { viewModel.deleteShopItem(it) },
+
+                                isSelectionMode = state.uiMode == ListPageUiMode.SELECTING,
                             )
                         }
                     }
@@ -147,14 +197,35 @@ fun ListPage(
             }
         }
     }
+
+    if (showConfirmDialog) {
+        ConfirmDialog(
+            onDismissRequest = {
+                showConfirmDialog = false
+            },
+            title = "Delete ${getItemsText(state.selectedItems.size)}?",
+            description = "This action cannot be undone.",
+            icon = Icons.Outlined.Delete,
+            iconColor = Color(0xFFDC2626),
+            iconBackgroundColor = Color(0xFFFEE2E2),
+            imageDescription = "Delete",
+            onConfirmation = {
+                showConfirmDialog = false
+                viewModel.deleteShopItems(state.selectedItems.map { it.id!! })
+                viewModel.clearItems()
+            }
+        )
+    }
 }
 
 
 @Composable
 private fun AnimatedShopItem(
+    modifier: Modifier = Modifier,
     item: ShopItem,
     onItemChanged: (ShopItem) -> Unit,
-    onDeleteClicked: (Long?) -> Unit
+    onDeleteClicked: (Long?) -> Unit,
+    isSelectionMode: Boolean
 ) {
     var isVisible by remember { mutableStateOf(true) }
     var shouldAnimate by remember { mutableStateOf(false) }
@@ -183,7 +254,9 @@ private fun AnimatedShopItem(
     ) {
         Column {
             ShopItemRow(
+                modifier = modifier,
                 shopItem = item,
+                isSelectionMode = isSelectionMode,
                 onItemChanged = onItemChanged,
                 onDeleteClicked = { id ->
                     isVisible = false

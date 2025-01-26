@@ -31,15 +31,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cromulent.cartio.ui.theme.CartioTheme
 import androidx.compose.animation.core.*
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.TextFieldColors
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.text.input.ImeAction
 
 
 @Composable
@@ -77,6 +76,7 @@ fun ItemInput(
             TextField(
                 value = shopItemText,
                 onValueChange = { shopItemText = it },
+                singleLine = true,
                 modifier = Modifier
                     .weight(1f)
                     .height(54.dp)
@@ -104,7 +104,19 @@ fun ItemInput(
                         )
                     }
                 },
-                placeholder = { Text("Add item...") }
+                placeholder = { Text("Add item...") },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                keyboardActions = KeyboardActions(
+                    onSend = {
+                        onAddClicked(
+                            shopItemText,
+                            quantityText
+                        )
+                        shopItemText = ""
+                        quantityText = ""
+                        showQuantity = false
+                    }
+                )
             )
 
             Button(
@@ -137,12 +149,15 @@ fun ItemInput(
                                         PointerEventType.Enter -> {
                                             isHovered = true
                                         }
+
                                         PointerEventType.Exit -> {
                                             isHovered = false
                                         }
+
                                         PointerEventType.Press -> {
                                             isPressed = true
                                         }
+
                                         PointerEventType.Release -> {
                                             isPressed = false
                                         }
@@ -202,7 +217,20 @@ fun ItemInput(
                     focusedPlaceholderColor = colors.placeholder,
                     cursorColor = colors.primary
                 ),
-                placeholder = { Text("Quantity...") }
+                placeholder = { Text("Quantity...") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                keyboardActions = KeyboardActions(
+                    onSend = {
+                        onAddClicked(
+                            shopItemText,
+                            quantityText
+                        )
+                        shopItemText = ""
+                        quantityText = ""
+                        showQuantity = false
+                    }
+                )
             )
         }
 

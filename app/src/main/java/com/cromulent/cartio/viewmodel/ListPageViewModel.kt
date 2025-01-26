@@ -1,11 +1,17 @@
 package com.cromulent.cartio.viewmodel
 
+import android.app.Application
+import android.content.Intent
 import android.util.Log
+import androidx.core.content.ContextCompat.startActivities
+import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cromulent.cartio.data.ShopItem
 import com.cromulent.cartio.repository.ShopRepositoryImpl
 import com.cromulent.cartio.state.ListPageState
+import com.cromulent.cartio.state.ListPageUiMode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -83,6 +89,61 @@ class ListPageViewModel(private val shopRepositoryImpl: ShopRepositoryImpl) : Vi
                     _state.update { it.copy(shopItems = previousItems) }
                 }
             )
+        }
+    }
+
+    fun toggleSelected(item: ShopItem) {
+
+        val mSelectedItems = arrayListOf<ShopItem>()
+
+        state.value.selectedItems.forEach {
+            mSelectedItems.add(it)
+        }
+
+        mSelectedItems.apply {
+            if (contains(item)) remove(item) else add(item)
+        }
+
+        _state.update {
+            it.copy(
+                selectedItems = mSelectedItems,
+                uiMode = if (mSelectedItems.isEmpty()) ListPageUiMode.NORMAL else ListPageUiMode.SELECTING
+            )
+        }
+    }
+
+    fun clearItems() {
+        _state.update {
+            it.copy(
+                uiMode = ListPageUiMode.NORMAL,
+                selectedItems = arrayListOf()
+            )
+        }
+    }
+
+    fun deleteShopItems(deleteIds: List<Long>) {
+        viewModelScope.launch {
+            shopRepositoryImpl.deleteShopItems(deleteIds).fold(
+                onSuccess = {
+                    loadItems()
+                },
+                onFailure = {
+                    Log.e(TAG, "deleteShopItems: $it")
+                }
+            )
+        }
+
+    }
+
+    fun createShareText(): String {
+        val toShareList = state.value.selectedItems.ifEmpty { state.value.shopItems }
+
+        return "Hey. Please buy these items:\n" + toShareList.joinToString("\n") { item ->
+            if (item.amount.isNullOrEmpty()) {
+                "• ${item.name}"
+            } else {
+                "• ${item.name} (${item.amount})"
+            }
         }
     }
 }
