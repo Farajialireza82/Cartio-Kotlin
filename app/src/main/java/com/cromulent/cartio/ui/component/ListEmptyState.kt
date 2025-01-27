@@ -1,33 +1,26 @@
 package com.cromulent.cartio.ui.component
 
-import android.graphics.drawable.Icon
-import androidx.compose.foundation.CombinedClickableNode
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.cromulent.cartio.R
 import com.cromulent.cartio.ui.theme.CartioTheme
 
 @Composable
@@ -85,8 +78,8 @@ private fun EmptyStatePrev() {
     CartioTheme {
         ListEmptyState(
             icon = Icons.AutoMirrored.Filled.List,
-            title = "Start your shopping list",
-            description = "Add items you need to buy and share the list with others",
+            title = stringResource(R.string.start_your_shopping_list),
+            description = stringResource(R.string.add_items_you_need_to_buy_and_share_the_list_with_others),
         )
     }
 }

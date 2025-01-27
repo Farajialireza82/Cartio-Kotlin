@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -87,7 +88,7 @@ fun ListPage(
         containerColor = Color.Transparent,
         topBar = {
             ListPageTopBar(
-                title = "Household Groceries",
+                title = stringResource(R.string.household_groceries),
                 shopItemCount = state.shopItems.size,
                 selectedItemCount = state.selectedItems.size,
                 onDeleteClicked = {
@@ -136,8 +137,8 @@ fun ListPage(
                             modifier = Modifier
                                 .padding(horizontal = 24.dp),
                             icon = Icons.AutoMirrored.Filled.List,
-                            title = "Start your shopping list",
-                            description = "Add items you need to buy and share the list with others",
+                            title = stringResource(R.string.start_your_shopping_list),
+                            description = stringResource(R.string.add_items_you_need_to_buy_and_share_the_list_with_others),
                         )
                     }
                 }

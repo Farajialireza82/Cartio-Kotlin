@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Cartio</string>
+    <string name="quantity">Quantity...</string>
+    <string name="add_item">Add item</string>
+    <string name="qty">QTY</string>
+    <string name="start_your_shopping_list">Start your shopping list</string>
+    <string name="add_items_you_need_to_buy_and_share_the_list_with_others">Add items you need to buy and share the list with others</string>
+    <string name="household_groceries">Household Groceries</string>
+    <string name="item">%1$s item</string>
+    <string name="items">%1$s items</string>
+    <string name="selected">%1$s selected</string>
 </resources>
