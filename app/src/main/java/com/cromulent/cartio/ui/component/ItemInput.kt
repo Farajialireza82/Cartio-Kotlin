@@ -1,6 +1,9 @@
 package com.cromulent.cartio.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -30,16 +33,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cromulent.cartio.ui.theme.CartioTheme
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.input.ImeAction
-
 
 @Composable
 fun ItemInput(
@@ -47,32 +49,18 @@ fun ItemInput(
     textFieldModifier: Modifier = Modifier,
     onAddClicked: (name: String, quantity: String) -> Unit
 ) {
-
-    val colors = object {
-        val background = Color.Transparent
-        val container = Color(0xFFE8E8EA)
-        val text = Color(0xFF111827)
-        val placeholder = Color(0xFF6B7280)
-        val primary = Color(0xFF16A34A)
-        val primaryDisabled = Color(0x6616A34A)
-    }
     var shopItemText by remember { mutableStateOf("") }
     var quantityText by remember { mutableStateOf("") }
     var showQuantity by remember { mutableStateOf(false) }
-
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.Transparent)
     ) {
-
         Row(
-            modifier =
-            Modifier
-                .padding(bottom = if (showQuantity) 8.dp else 0.dp)
+            modifier = Modifier.padding(bottom = if (showQuantity) 8.dp else 0.dp)
         ) {
-
             TextField(
                 value = shopItemText,
                 onValueChange = { shopItemText = it },
@@ -82,25 +70,18 @@ fun ItemInput(
                     .height(54.dp)
                     .padding(end = 4.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.colors().copy(
-                    unfocusedContainerColor = colors.container,
-                    focusedContainerColor = colors.container,
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                     unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    focusedTextColor = colors.text,
-                    unfocusedPlaceholderColor = colors.placeholder,
-                    focusedPlaceholderColor = colors.placeholder,
-                    cursorColor = colors.primary
+                    focusedIndicatorColor = Color.Transparent
                 ),
                 suffix = {
                     if (shopItemText.isNotBlank()) {
                         Text(
                             text = "QTY",
-                            color = colors.placeholder,
-                            modifier = Modifier
-                                .clickable {
-                                    showQuantity = !showQuantity
-                                }
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.clickable { showQuantity = !showQuantity }
                         )
                     }
                 },
@@ -108,10 +89,7 @@ fun ItemInput(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                 keyboardActions = KeyboardActions(
                     onSend = {
-                        onAddClicked(
-                            shopItemText,
-                            quantityText
-                        )
+                        onAddClicked(shopItemText, quantityText)
                         shopItemText = ""
                         quantityText = ""
                         showQuantity = false
@@ -185,21 +163,20 @@ fun ItemInput(
                             }
                     },
                 contentPadding = PaddingValues(0.dp),
-                colors = ButtonDefaults.buttonColors().copy(
-                    containerColor = colors.primary,
-                    disabledContainerColor = colors.primaryDisabled
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(0.4f)
                 ),
             ) {
                 Icon(
                     Icons.Default.Add,
-                    null,
-                    tint = Color.White
+                    contentDescription = "Add item",
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
 
         AnimatedVisibility(showQuantity) {
-
             TextField(
                 value = quantityText,
                 onValueChange = { quantityText = it },
@@ -207,25 +184,18 @@ fun ItemInput(
                     .height(54.dp)
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.colors().copy(
-                    unfocusedContainerColor = colors.container,
-                    focusedContainerColor = colors.container,
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                     unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    focusedTextColor = colors.text,
-                    unfocusedPlaceholderColor = colors.placeholder,
-                    focusedPlaceholderColor = colors.placeholder,
-                    cursorColor = colors.primary
+                    focusedIndicatorColor = Color.Transparent
                 ),
                 placeholder = { Text("Quantity...") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                 keyboardActions = KeyboardActions(
                     onSend = {
-                        onAddClicked(
-                            shopItemText,
-                            quantityText
-                        )
+                        onAddClicked(shopItemText, quantityText)
                         shopItemText = ""
                         quantityText = ""
                         showQuantity = false
@@ -233,7 +203,6 @@ fun ItemInput(
                 )
             )
         }
-
     }
 }
 

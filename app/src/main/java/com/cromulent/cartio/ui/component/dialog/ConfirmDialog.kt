@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.cromulent.cartio.ui.theme.CartioTheme
 
 @Composable
 fun ConfirmDialog(
@@ -44,9 +45,9 @@ fun ConfirmDialog(
     description: String,
     onConfirmation: () -> Unit,
     icon: ImageVector,
-    iconColor: Color = Color(0xFF16A34A),
-    iconBackgroundColor: Color = Color(0xFFDCFCE7),
-    imageDescription: String? = null,
+    isDestructive: Boolean = true,
+    iconColor: Color = MaterialTheme.colorScheme.error,
+    iconBackgroundColor: Color = MaterialTheme.colorScheme.errorContainer,
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
@@ -57,7 +58,9 @@ fun ConfirmDialog(
                     shape = RoundedCornerShape(12.dp)
                 ),
             shape = RoundedCornerShape(8.dp),
-            colors = CardDefaults.cardColors().copy(Color.Transparent)
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
@@ -85,28 +88,27 @@ fun ConfirmDialog(
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = title,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = description,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
-            HorizontalDivider()
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
+            )
 
             // Buttons
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(64.dp)
-                    .background(
-                        color = Color(0xFFE8E8EA)
-                    )
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
                     .padding(vertical = 8.dp, horizontal = 16.dp),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
@@ -117,7 +119,8 @@ fun ConfirmDialog(
                 ) {
                     Text(
                         text = "Cancel",
-                        color = Color.Black
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
@@ -127,12 +130,17 @@ fun ConfirmDialog(
                     onClick = onConfirmation,
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = iconColor
+                        containerColor = if (isDestructive) {
+                            MaterialTheme.colorScheme.error
+                        } else {
+                            MaterialTheme.colorScheme.primary
+                        }
                     )
                 ) {
                     Text(
                         text = "Delete",
-                        color = Color.White
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onError
                     )
                 }
             }
@@ -143,14 +151,14 @@ fun ConfirmDialog(
 @Preview
 @Composable
 private fun DialogPrev() {
-    ConfirmDialog(
-        onDismissRequest = {},
-        title = "Delete items?",
-        description = "This action cannot be undone.",
-        onConfirmation = {},
-        icon = Icons.Outlined.Delete,
-        iconColor = Color(0xFFDC2626),
-        iconBackgroundColor = Color(0xFFFEE2E2),
-        imageDescription = "Delete"
-    )
+    CartioTheme {
+        ConfirmDialog(
+            onDismissRequest = { },
+            title = "Delete items?",
+            description = "This action cannot be undone.",
+            icon = Icons.Outlined.Delete,
+            isDestructive = true,
+            onConfirmation = { }
+        )
+    }
 }

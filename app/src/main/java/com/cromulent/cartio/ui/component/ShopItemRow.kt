@@ -21,9 +21,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,8 +38,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.cromulent.cartio.data.ShopItem
+import com.cromulent.cartio.ui.theme.CartioTheme
 
 @Composable
 fun ShopItemRow(
@@ -51,75 +51,60 @@ fun ShopItemRow(
 ) {
     var isChecked by remember { mutableStateOf(shopItem.isBought) }
 
-    val colors = object {
-        val background = Color.Transparent
-        val container = Color(0xFFE8E8EA)
-        val text = Color(0xFF111827)
-        val placeholder = Color(0xFF6B7280)
-        val primary = Color(0xFF16A34A)
-        val primaryDisabled = Color(0x6616A34A)
-    }
-
-    Column {
-
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp)
+            .height(64.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp)
-                .height(64.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                androidx.compose.animation.AnimatedVisibility(!isSelectionMode) {
-                    RoundedCornerCheckbox(
-                        modifier = Modifier
-                            .padding(end = 8.dp),
-                        isChecked = isChecked,
-                        checkedColor = colors.primary,
-                        uncheckedBorderColor = Color(0xFF9CA3AF)
-                    ) {
+            AnimatedVisibility(!isSelectionMode) {
+                RoundedCornerCheckbox(
+                    modifier = Modifier.padding(end = 8.dp),
+                    isChecked = isChecked,
+                    onValueChange = {
                         isChecked = !isChecked
                         shopItem.isBought = !shopItem.isBought
                         onItemChanged(shopItem.copy())
                     }
-                }
-
-                Text(
-                    shopItem.name,
-                    fontSize = 18.sp,
-                    color = if (isChecked) Color(0xFF9CA3AF) else Color(0xFF111827),
-                    textDecoration = if (isChecked) TextDecoration.LineThrough else null
                 )
-                if (shopItem.amount != "0" && !shopItem.amount.isNullOrEmpty()) {
-                    Text(
-                        shopItem.amount.toString(),
-                        fontSize = 12.sp,
-                        color = Color(0xFF4B5563),
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                    )
-                }
             }
-            androidx.compose.animation.AnimatedVisibility(!isSelectionMode) {
-                IconButton(
-                    onClick = { onDeleteClicked(shopItem.id) }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                        tint = Color(0xFFE75959),
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                    )
-                }
+
+            Text(
+                text = shopItem.name,
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (isChecked)
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                else
+                    MaterialTheme.colorScheme.onSurface,
+                textDecoration = if (isChecked) TextDecoration.LineThrough else null
+            )
+
+            if (!shopItem.amount.isNullOrEmpty() && shopItem.amount != "0") {
+                Text(
+                    text = shopItem.amount.toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+            }
+        }
+
+        AnimatedVisibility(!isSelectionMode) {
+            IconButton(onClick = { onDeleteClicked(shopItem.id) }) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete item",
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(end = 16.dp)
+                )
             }
         }
     }
-
 }
 
 @Composable
@@ -127,35 +112,40 @@ fun RoundedCornerCheckbox(
     isChecked: Boolean,
     modifier: Modifier = Modifier,
     size: Float = 24f,
-    checkedColor: Color,
-    uncheckedBorderColor: Color,
-    uncheckedColor: Color = Color.White,
     onValueChange: (Boolean) -> Unit
 ) {
-    val checkboxColor: Color by animateColorAsState(if (isChecked) checkedColor else uncheckedColor)
+    val checkboxColor: Color by animateColorAsState(
+        targetValue = if (isChecked)
+            MaterialTheme.colorScheme.primary
+        else
+            MaterialTheme.colorScheme.surface
+    )
+
     val density = LocalDensity.current
     val duration = 200
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .toggleable(
-                value = isChecked,
-                role = Role.Checkbox,
-                onValueChange = onValueChange
-            )
+        modifier = modifier.toggleable(
+            value = isChecked,
+            role = Role.Checkbox,
+            onValueChange = onValueChange
+        )
     ) {
         Box(
             modifier = Modifier
                 .size(size.dp)
                 .background(
                     color = checkboxColor,
-                    shape = RoundedCornerShape(100)
+                    shape = RoundedCornerShape(percent = 100)
                 )
                 .border(
                     width = 1.5.dp,
-                    color = if (isChecked) checkedColor else uncheckedBorderColor,
-                    shape = RoundedCornerShape(100)
+                    color = if (isChecked)
+                        MaterialTheme.colorScheme.primary
+                    else
+                        MaterialTheme.colorScheme.outline,
+                    shape = RoundedCornerShape(percent = 100)
                 ),
             contentAlignment = Alignment.Center
         ) {
@@ -172,7 +162,7 @@ fun RoundedCornerCheckbox(
                 Icon(
                     Icons.Default.Check,
                     contentDescription = null,
-                    tint = uncheckedColor
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
@@ -182,10 +172,14 @@ fun RoundedCornerCheckbox(
 @Preview
 @Composable
 private fun ShopItemRowPrev() {
-    ShopItemRow(
-        shopItem = ShopItem(12L, "Bread", "2 Loaves", isBought = true),
-        onItemChanged = {}
-    ) { _ ->
+    CartioTheme(
+        darkTheme = true
+    ) {
+        ShopItemRow(
+            shopItem = ShopItem(12L, "Bread", "2 Loaves", isBought = true),
+            onItemChanged = {}
+        ) { _ ->
 
+        }
     }
 }

@@ -28,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,6 +54,7 @@ import com.cromulent.cartio.ui.component.ListEmptyState
 import com.cromulent.cartio.ui.component.ListPageTopBar
 import com.cromulent.cartio.ui.component.ShopItemRow
 import com.cromulent.cartio.ui.component.dialog.ConfirmDialog
+import com.cromulent.cartio.ui.theme.listPageGradient
 import com.cromulent.cartio.utils.getItemsText
 import com.cromulent.cartio.viewmodel.ListPageViewModel
 import kotlinx.coroutines.launch
@@ -80,13 +82,7 @@ fun ListPage(
     Scaffold(
         modifier = modifier
             .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xCCF0FDF4),
-                        Color(0x80F0FDF4),
-                        Color(0xFFF3F4F6)
-                    )
-                )
+                brush = listPageGradient()
             ),
         containerColor = Color.Transparent,
         topBar = {
@@ -173,9 +169,8 @@ fun ListPage(
                                         }
                                     )
                                     .background(
-                                        color = if (state.selectedItems.contains(item)) Color(
-                                            0x6616A34A
-                                        ) else Color.White
+                                        color = if (state.selectedItems.contains(item)) MaterialTheme.colorScheme.primaryContainer
+                                        else MaterialTheme.colorScheme.onSecondary
                                     ),
                                 showDivider = state.shopItems.last() != item,
 
@@ -211,7 +206,6 @@ fun ListPage(
             icon = Icons.Outlined.Delete,
             iconColor = Color(0xFFDC2626),
             iconBackgroundColor = Color(0xFFFEE2E2),
-            imageDescription = "Delete",
             onConfirmation = {
                 showConfirmDialog = false
                 viewModel.deleteShopItems(state.selectedItems.map { it.id!! })

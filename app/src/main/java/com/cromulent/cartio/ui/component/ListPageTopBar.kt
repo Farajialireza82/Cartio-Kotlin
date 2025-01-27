@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -43,28 +44,24 @@ fun ListPageTopBar(
     onClearClicked: () -> Unit,
     onMarkAsBoughtClicked: () -> Unit
 ) {
-
-
     LargeTopAppBar(
         title = {
             Column(
                 verticalArrangement = Arrangement.Top,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = title,
-                    color = Color(0xff1F2937),
-                    fontWeight = FontWeight.Medium
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 AnimatedVisibility(shopItemCount != 0 || selectedItemCount != 0) {
                     Text(
                         text = if (selectedItemCount != 0)
                             "${getItemsText(selectedItemCount)} selected"
                         else getItemsText(shopItemCount),
-
-                        fontSize = 18.sp,
-                        color = Color(0xFF374151),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 4.dp)
                     )
                 }
@@ -72,46 +69,53 @@ fun ListPageTopBar(
         },
         navigationIcon = {
             AnimatedVisibility(selectedItemCount != 0) {
-                IconButton(
-                    onClick = { onClearClicked() }
-                ) {
-                    Icon(Icons.Default.Close, "Close")
+                IconButton(onClick = onClearClicked) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = "Clear selection",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             }
         },
         actions = {
             Row {
-
-                androidx.compose.animation.AnimatedVisibility(shopItemCount != 0) {
-
-                    IconButton(
-                        onClick = { onShareClicked() }
-                    ) { Icon(Icons.Default.Share, "") }
-
+                AnimatedVisibility(shopItemCount != 0) {
+                    IconButton(onClick = onShareClicked) {
+                        Icon(
+                            Icons.Default.Share,
+                            contentDescription = "Share list",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
 
                 AnimatedVisibility(selectedItemCount != 0) {
                     Row {
-                        IconButton(
-                            onClick = {
-                                onDeleteClicked()
-                            }
-                        ) {
-                            Icon(Icons.Default.Delete, "Delete")
+                        IconButton(onClick = onDeleteClicked) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Delete items",
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
                         }
-                        IconButton(
-                            onClick = { onMarkAsBoughtClicked() }
-                        ) {
-                            Icon(Icons.Default.Done, "Mark as done")
+                        IconButton(onClick = onMarkAsBoughtClicked) {
+                            Icon(
+                                Icons.Default.Done,
+                                contentDescription = "Mark as done",
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
                         }
                     }
                 }
             }
         },
         colors = TopAppBarDefaults.largeTopAppBarColors(
-            containerColor = Color.Transparent
+            containerColor = Color.Transparent,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+            actionIconContentColor = MaterialTheme.colorScheme.onSurface
         ),
         modifier = modifier
-            .background(color = Color.Transparent)
     )
 }
