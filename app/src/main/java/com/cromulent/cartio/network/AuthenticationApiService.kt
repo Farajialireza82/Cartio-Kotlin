@@ -12,11 +12,18 @@ import io.ktor.http.contentType
 class AuthenticationApiService(private val client: HttpClient) {
 
     companion object {
-        private const val END_POINT = "http://10.0.0.36:8080/api/auth/register"
+        private const val END_POINT = "http://10.0.0.36:8080/api/auth"
     }
 
     suspend fun createUser(data: RegisterDTO): HttpResponse {
-        return client.post(urlString = END_POINT) {
+        return client.post(urlString = END_POINT + "/register") {
+            contentType(ContentType.Application.Json)
+            setBody(data)
+        }
+    }
+
+    suspend fun userLogin(data: LoginDTO): HttpResponse {
+        return client.post(urlString = END_POINT + "/authenticate") {
             contentType(ContentType.Application.Json)
             setBody(data)
         }

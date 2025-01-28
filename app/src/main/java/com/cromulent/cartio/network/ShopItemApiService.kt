@@ -17,7 +17,7 @@ import io.ktor.http.contentType
 class ShopItemApiService(private val client: HttpClient) {
 
     companion object {
-        private const val END_POINT = "http://10.0.2.2:8080/shopItems"
+        private const val END_POINT = "http://10.0.0.36:8080/shopItems"
     }
 
     suspend fun getAllShopItems() = client.get(END_POINT)
