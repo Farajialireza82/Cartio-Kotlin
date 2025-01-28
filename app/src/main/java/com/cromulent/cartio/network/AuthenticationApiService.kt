@@ -1,5 +1,6 @@
 package com.cromulent.cartio.network
 
+import com.cromulent.cartio.network.dto.LoginDTO
 import com.cromulent.cartio.network.dto.RegisterDTO
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
