@@ -1,4 +1,4 @@
-package com.cromulent.cartio
+package com.cromulent.cartio.ui.screen
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
@@ -41,16 +41,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.cromulent.cartio.R
 import com.cromulent.cartio.data.ShopItem
 import com.cromulent.cartio.state.ListPageUiMode
-import com.cromulent.cartio.ui.component.ItemInput
+import com.cromulent.cartio.ui.component.textField.ItemInput
 import com.cromulent.cartio.ui.component.ListEmptyState
 import com.cromulent.cartio.ui.component.ListPageTopBar
 import com.cromulent.cartio.ui.component.ShopItemRow
@@ -89,8 +89,13 @@ fun ListPage(
         topBar = {
             ListPageTopBar(
                 title = stringResource(R.string.household_groceries),
-                shopItemCount = state.shopItems.size,
-                selectedItemCount = state.selectedItems.size,
+                showShareButton = state.shopItems.isNotEmpty(),
+                description = if (state.shopItems.isEmpty()) "" else if (state.selectedItems.isNotEmpty())
+                    stringResource(R.string.selected, getItemsText(state.selectedItems.size))
+                else getItemsText(state.shopItems.size),
+                showClearButton = state.selectedItems.isNotEmpty(),
+                showDoneButton = state.selectedItems.any { !it.isBought },
+                showDeleteButton = state.selectedItems.isNotEmpty(),
                 onDeleteClicked = {
                     showConfirmDialog = true
                 },

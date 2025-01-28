@@ -31,12 +31,15 @@ import com.cromulent.cartio.utils.getItemsText
 fun ListPageTopBar(
     modifier: Modifier = Modifier,
     title: String,
-    shopItemCount: Int,
-    selectedItemCount: Int,
-    onDeleteClicked: () -> Unit,
-    onShareClicked: () -> Unit,
-    onClearClicked: () -> Unit,
-    onMarkAsBoughtClicked: () -> Unit
+    description: String,
+    showClearButton: Boolean = false,
+    showShareButton: Boolean = false,
+    showDoneButton: Boolean = false,
+    showDeleteButton: Boolean = false,
+    onDeleteClicked: () -> Unit = {},
+    onShareClicked: () -> Unit = {},
+    onClearClicked: () -> Unit = {},
+    onMarkAsBoughtClicked: () -> Unit = {}
 ) {
     LargeTopAppBar(
         title = {
@@ -49,11 +52,9 @@ fun ListPageTopBar(
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                AnimatedVisibility(shopItemCount != 0 || selectedItemCount != 0) {
+                AnimatedVisibility(description.isNotBlank()) {
                     Text(
-                        text = if (selectedItemCount != 0)
-                            stringResource(R.string.selected, getItemsText(selectedItemCount))
-                        else getItemsText(shopItemCount),
+                        text = description,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 4.dp)
@@ -62,7 +63,7 @@ fun ListPageTopBar(
             }
         },
         navigationIcon = {
-            AnimatedVisibility(selectedItemCount != 0) {
+            AnimatedVisibility(showClearButton) {
                 IconButton(onClick = onClearClicked) {
                     Icon(
                         Icons.Default.Close,
@@ -74,7 +75,17 @@ fun ListPageTopBar(
         },
         actions = {
             Row {
-                AnimatedVisibility(shopItemCount != 0) {
+
+                AnimatedVisibility(showDoneButton) {
+                    IconButton(onClick = onMarkAsBoughtClicked) {
+                        Icon(
+                            Icons.Default.Done,
+                            contentDescription = "Mark as done",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+                AnimatedVisibility(showShareButton) {
                     IconButton(onClick = onShareClicked) {
                         Icon(
                             Icons.Default.Share,
@@ -83,23 +94,13 @@ fun ListPageTopBar(
                         )
                     }
                 }
-
-                AnimatedVisibility(selectedItemCount != 0) {
-                    Row {
-                        IconButton(onClick = onDeleteClicked) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = "Delete items",
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                        IconButton(onClick = onMarkAsBoughtClicked) {
-                            Icon(
-                                Icons.Default.Done,
-                                contentDescription = "Mark as done",
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                AnimatedVisibility(showDeleteButton) {
+                    IconButton(onClick = onDeleteClicked) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "Delete items",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
             }

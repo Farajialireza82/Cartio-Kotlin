@@ -54,5 +54,6 @@ val httpClientAndroid = HttpClient(Android){
 
     install(DefaultRequest){
         header(HttpHeaders.ContentType, ContentType.Application.Any)
+//        header(HttpHeaders.Authorization, "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGkxIiwiaWF0IjoxNzM4MDYzNzcyLCJleHAiOjE3MzgwNjUyMTJ9.DEDZUOjDCjVhmuFxrKmZyPFpm7kvBhkEd-1n3JXf7Wc")
     }
 }

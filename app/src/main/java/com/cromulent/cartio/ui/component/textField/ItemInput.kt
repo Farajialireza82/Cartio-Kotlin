@@ -1,4 +1,4 @@
-package com.cromulent.cartio.ui.component
+package com.cromulent.cartio.ui.component.textField
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
@@ -28,7 +28,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,11 +41,9 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.LayoutDirection
 import com.cromulent.cartio.R
 import com.cromulent.cartio.utils.getDeviceLayoutDirection
@@ -108,82 +105,20 @@ fun ItemInput(
                     )
                 }
 
-                Button(
-                    onClick = {
-                        onAddClicked(
-                            shopItemText,
-                            quantityText
-                        )
-                        shopItemText = ""
-                        quantityText = ""
-                        showQuantity = false
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    enabled = shopItemText.isNotBlank(),
+                CartioButton(
                     modifier = Modifier
-                        .size(54.dp)
-                        .graphicsLayer {
-                            scaleX = 1f
-                            scaleY = 1f
-                        }
-                        .composed {
-                            var isHovered by remember { mutableStateOf(false) }
-                            var isPressed by remember { mutableStateOf(false) }
-
-                            pointerInput(Unit) {
-                                awaitPointerEventScope {
-                                    while (true) {
-                                        val event = awaitPointerEvent()
-                                        when (event.type) {
-                                            PointerEventType.Enter -> {
-                                                isHovered = true
-                                            }
-
-                                            PointerEventType.Exit -> {
-                                                isHovered = false
-                                            }
-
-                                            PointerEventType.Press -> {
-                                                isPressed = true
-                                            }
-
-                                            PointerEventType.Release -> {
-                                                isPressed = false
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                                .scale(
-                                    animateFloatAsState(
-                                        targetValue = when {
-                                            isPressed -> 0.9f
-                                            isHovered -> 1.1f
-                                            else -> 1f
-                                        },
-                                        animationSpec = spring(
-                                            dampingRatio = Spring.DampingRatioMediumBouncy,
-                                            stiffness = Spring.StiffnessLow
-                                        )
-                                    ).value
-                                )
-                                .graphicsLayer {
-                                    shadowElevation = if (isHovered && !isPressed) 8f else 0f
-                                    shape = RoundedCornerShape(16.dp)
-                                    clip = true
-                                }
-                        },
-                    contentPadding = PaddingValues(0.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        disabledContainerColor = MaterialTheme.colorScheme.primary.copy(0.4f)
-                    ),
+                        .size(54.dp),
+                    enabled = shopItemText.isNotBlank(),
+                    title = "",
+                    icon = Icons.Default.Add
                 ) {
-                    Icon(
-                        Icons.Default.Add,
-                        contentDescription = stringResource(R.string.add_item),
-                        tint = MaterialTheme.colorScheme.onPrimary
+                    onAddClicked(
+                        shopItemText,
+                        quantityText
                     )
+                    shopItemText = ""
+                    quantityText = ""
+                    showQuantity = false
                 }
             }
         }
