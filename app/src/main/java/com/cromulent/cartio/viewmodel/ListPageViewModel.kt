@@ -1,29 +1,37 @@
 package com.cromulent.cartio.viewmodel
 
-import android.app.Application
-import android.content.Intent
 import android.util.Log
-import androidx.core.content.ContextCompat.startActivities
-import androidx.core.content.ContextCompat.startActivity
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cromulent.cartio.data.ShopItem
 import com.cromulent.cartio.repository.ShopRepositoryImpl
 import com.cromulent.cartio.state.ListPageState
 import com.cromulent.cartio.state.ListPageUiMode
+import com.cromulent.cartio.utils.TokenRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ListPageViewModel(private val shopRepositoryImpl: ShopRepositoryImpl) : ViewModel() {
+class ListPageViewModel(
+    private val shopRepositoryImpl: ShopRepositoryImpl,
+    private val tokenRepository: TokenRepository
+) : ViewModel() {
     private val _state: MutableStateFlow<ListPageState> = MutableStateFlow(ListPageState())
     val state: StateFlow<ListPageState> = _state
+    private var token: String? = null
+
+    init {
+        viewModelScope.launch {
+            tokenRepository.getToken().collect {
+                token = it
+            }
+        }
+    }
 
     fun loadItems() {
         viewModelScope.launch {
-            shopRepositoryImpl.getAllShopItems().fold(
+            shopRepositoryImpl.getAllShopItems(token).fold(
                 onSuccess = { shopItems ->
                     _state.update {
                         it.copy(shopItems = shopItems)
@@ -37,7 +45,7 @@ class ListPageViewModel(private val shopRepositoryImpl: ShopRepositoryImpl) : Vi
 
     fun addItem(name: String, quantity: String) {
         viewModelScope.launch {
-            shopRepositoryImpl.addShopItem(ShopItem(null, name, quantity, false))
+            shopRepositoryImpl.addShopItem(token, ShopItem(null, name, quantity, false))
                 .fold(
                     onSuccess = {
                         loadItems()
@@ -50,7 +58,7 @@ class ListPageViewModel(private val shopRepositoryImpl: ShopRepositoryImpl) : Vi
 
     fun editShopItem(shopItem: ShopItem) {
         viewModelScope.launch {
-            shopRepositoryImpl.editShopItem(shopItem).fold(
+            shopRepositoryImpl.editShopItem(token, shopItem).fold(
                 onSuccess = {
                     val newShopItems = state.value.shopItems.map { item ->
                         if (item.id == shopItem.id) shopItem else item
@@ -77,7 +85,7 @@ class ListPageViewModel(private val shopRepositoryImpl: ShopRepositoryImpl) : Vi
                 )
             }
 
-            shopRepositoryImpl.deleteShopItem(id).fold(
+            shopRepositoryImpl.deleteShopItem(token, id).fold(
                 onSuccess = {
                     // Success - UI is already updated
                 },
@@ -121,7 +129,7 @@ class ListPageViewModel(private val shopRepositoryImpl: ShopRepositoryImpl) : Vi
 
     fun deleteShopItems(deleteIds: List<Long>) {
         viewModelScope.launch {
-            shopRepositoryImpl.deleteShopItems(deleteIds).fold(
+            shopRepositoryImpl.deleteShopItems(token, deleteIds).fold(
                 onSuccess = {
                     loadItems()
                 },
@@ -161,13 +169,22 @@ class ListPageViewModel(private val shopRepositoryImpl: ShopRepositoryImpl) : Vi
     fun markSelectedAsBought(boughtItems: List<ShopItem>) {
         val boughtIds = boughtItems.map { it.id!! }
         viewModelScope.launch {
-            shopRepositoryImpl.markAsBought(boughtIds).fold(
+            shopRepositoryImpl.markAsBought(token, boughtIds).fold(
                 onSuccess = {
                     loadItems()
                 }, onFailure = {
                     Log.e(TAG, "markSelectedAsBought: $it")
                 }
             )
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            tokenRepository.deleteToken()
+            _state.update {
+                it.copy(uiMode = ListPageUiMode.LOGOUT)
+            }
         }
     }
 }

@@ -43,6 +43,7 @@ fun ConfirmDialog(
     onDismissRequest: () -> Unit,
     title: String,
     description: String,
+    confirmText: String,
     onConfirmation: () -> Unit,
     icon: ImageVector,
     isDestructive: Boolean = true,
@@ -138,7 +139,7 @@ fun ConfirmDialog(
                     )
                 ) {
                     Text(
-                        text = "Delete",
+                        text = confirmText,
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onError
                     )
@@ -156,6 +157,7 @@ private fun DialogPrev() {
             onDismissRequest = { },
             title = "Delete items?",
             description = "This action cannot be undone.",
+            confirmText = "Delete",
             icon = Icons.Outlined.Delete,
             isDestructive = true,
             onConfirmation = { }

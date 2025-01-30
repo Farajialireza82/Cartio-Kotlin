@@ -3,15 +3,15 @@ package com.cromulent.cartio.repository
 import com.cromulent.cartio.data.ShopItem
 
 interface ShopRepository {
-    suspend fun getAllShopItems(): Result<List<ShopItem>>
+    suspend fun getAllShopItems(token: String?): Result<List<ShopItem>>
 
-    suspend fun addShopItem(shopItem: ShopItem): Result<Long>
+    suspend fun addShopItem(token: String?, shopItem: ShopItem): Result<Long>
 
-    suspend fun editShopItem(shopItem: ShopItem): Result<Unit>
+    suspend fun editShopItem(token: String?, shopItem: ShopItem): Result<Unit>
 
-    suspend fun deleteShopItem(id: Long?): Result<Unit>
+    suspend fun deleteShopItem(token: String?, id: Long?): Result<Unit>
 
-    suspend fun deleteShopItems(ids: List<Long>?): Result<Unit>
+    suspend fun deleteShopItems(token: String?, ids: List<Long>?): Result<Unit>
 
-    suspend fun markAsBought(ids: List<Long>?): Result<Unit>
+    suspend fun markAsBought(token: String?, ids: List<Long>?): Result<Unit>
 }

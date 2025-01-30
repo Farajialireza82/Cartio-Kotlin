@@ -9,4 +9,10 @@
     <string name="item">%1$s item</string>
     <string name="items">%1$s items</string>
     <string name="selected">%1$s selected</string>
+    <string name="are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
+    <string name="your_data_will_remain_unchanged">Your data will remain unchanged</string>
+    <string name="logout">Logout</string>
+    <string name="delete">Delete</string>
+    <string name="this_action_cannot_be_undone">This action cannot be undone.</string>
+    <string name="delete_items">Delete %1$s?</string>
 </resources>

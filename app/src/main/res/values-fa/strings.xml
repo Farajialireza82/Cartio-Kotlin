@@ -9,4 +9,10 @@
     <string name="item">%1$s مورد</string>
     <string name="items">%1$s مورد</string>
     <string name="selected">%1$s انتخاب شده</string>
+    <string name="are_you_sure_you_want_to_logout">آیا میخواهید از حساب کاربری خود خارج شوید؟</string>
+    <string name="your_data_will_remain_unchanged">اطلاعاتتان تغییر نخواهد کرد</string>
+    <string name="logout">خروج</string>
+    <string name="delete">حذف</string>
+    <string name="this_action_cannot_be_undone">این کار قابل بازگشت نخواهد بود</string>
+    <string name="delete_items">حذف %1$s?</string>
 </resources>

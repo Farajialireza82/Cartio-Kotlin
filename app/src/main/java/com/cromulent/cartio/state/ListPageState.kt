@@ -8,5 +8,5 @@ data class ListPageState(
     val uiMode: ListPageUiMode = ListPageUiMode.NORMAL
 )
 enum class ListPageUiMode{
-    LOADING, SELECTING, NORMAL
+    LOADING, SELECTING, NORMAL, LOGOUT
 }

@@ -4,12 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.cromulent.cartio.ui.screen.ListPage
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.cromulent.cartio.ui.screen.ListScreen
 import com.cromulent.cartio.ui.screen.LoginScreen
 import com.cromulent.cartio.ui.screen.SignUpScreen
 import com.cromulent.cartio.ui.theme.CartioTheme
-import com.cromulent.cartio.viewmodel.ListPageViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,10 +20,32 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CartioTheme {
-//              ListPage()
-                LoginScreen()
-//                SignUpScreen()
+                val navController: NavHostController = rememberNavController()
+
+                NavHost(
+                    navController = navController,
+                    startDestination = CartioRoutes.SIGNUP.name,
+                    modifier = Modifier,
+                ) {
+
+                    composable(CartioRoutes.SIGNUP.name) {
+                        SignUpScreen( navController = navController )
+                    }
+                    composable(CartioRoutes.LOGIN.name) {
+                        LoginScreen( navController = navController )
+                    }
+                    composable(CartioRoutes.LIST.name) {
+                        ListScreen( navController = navController )
+                    }
+
+                }
             }
         }
     }
+}
+
+enum class CartioRoutes {
+    SIGNUP,
+    LOGIN,
+    LIST
 }

@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,6 +38,8 @@ fun ListPageTopBar(
     showShareButton: Boolean = false,
     showDoneButton: Boolean = false,
     showDeleteButton: Boolean = false,
+    showLogoutButton: Boolean = false,
+    onLogoutClicked: () -> Unit = {},
     onDeleteClicked: () -> Unit = {},
     onShareClicked: () -> Unit = {},
     onClearClicked: () -> Unit = {},
@@ -63,13 +67,24 @@ fun ListPageTopBar(
             }
         },
         navigationIcon = {
-            AnimatedVisibility(showClearButton) {
-                IconButton(onClick = onClearClicked) {
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription = "Clear selection",
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
+            Row {
+                AnimatedVisibility(showClearButton) {
+                    IconButton(onClick = onClearClicked) {
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = "Clear selection",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+                AnimatedVisibility(!showClearButton && showLogoutButton){
+                    IconButton(onLogoutClicked) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.Logout,
+                            null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
             }
         },

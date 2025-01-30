@@ -4,9 +4,11 @@ import com.cromulent.cartio.network.AuthenticationApiService
 import com.cromulent.cartio.network.ShopItemApiService
 import com.cromulent.cartio.repository.ShopRepositoryImpl
 import com.cromulent.cartio.repository.AuthRepositoryImpl
+import com.cromulent.cartio.utils.TokenRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
+    single { TokenRepository(get()) }
     single { provideAuthRepository(get()) }
     single { provideRemoteRepository(get()) }
 }

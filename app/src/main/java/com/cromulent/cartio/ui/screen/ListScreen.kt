@@ -26,7 +26,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -47,6 +49,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.cromulent.cartio.CartioRoutes
 import com.cromulent.cartio.R
 import com.cromulent.cartio.data.ShopItem
 import com.cromulent.cartio.state.ListPageUiMode
@@ -65,19 +70,26 @@ import java.time.Duration
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ListPage(
+fun ListScreen(
     modifier: Modifier = Modifier
         .imePadding(),
-    viewModel: ListPageViewModel = koinViewModel()
+    viewModel: ListPageViewModel = koinViewModel(),
+    navController: NavHostController
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
 
 
-    var showConfirmDialog by remember { mutableStateOf(false) }
+    var showConfirmDeleteDialog by remember { mutableStateOf(false) }
+    var showConfirmLogoutDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.loadItems()
+    }
+
+    if(state.uiMode == ListPageUiMode.LOGOUT){
+        navController.navigate(CartioRoutes.LOGIN.name)
+        navController.popBackStack()
     }
 
     Scaffold(
@@ -94,10 +106,14 @@ fun ListPage(
                     stringResource(R.string.selected, getItemsText(state.selectedItems.size))
                 else getItemsText(state.shopItems.size),
                 showClearButton = state.selectedItems.isNotEmpty(),
+                showLogoutButton = true,
                 showDoneButton = state.selectedItems.any { !it.isBought },
                 showDeleteButton = state.selectedItems.isNotEmpty(),
+                onLogoutClicked = {
+                    showConfirmLogoutDialog = true
+                },
                 onDeleteClicked = {
-                    showConfirmDialog = true
+                    showConfirmDeleteDialog = true
                 },
                 onMarkAsBoughtClicked = {
                     viewModel.markSelectedAsBought(state.selectedItems)
@@ -202,20 +218,39 @@ fun ListPage(
         }
     }
 
-    if (showConfirmDialog) {
+    if (showConfirmDeleteDialog) {
         ConfirmDialog(
             onDismissRequest = {
-                showConfirmDialog = false
+                showConfirmDeleteDialog = false
             },
-            title = "Delete ${getItemsText(state.selectedItems.size)}?",
-            description = "This action cannot be undone.",
+            title = stringResource(R.string.delete_items, getItemsText(state.selectedItems.size)),
+            description = stringResource(R.string.this_action_cannot_be_undone),
+            confirmText = stringResource(R.string.delete),
             icon = Icons.Outlined.Delete,
             iconColor = Color(0xFFDC2626),
             iconBackgroundColor = Color(0xFFFEE2E2),
             onConfirmation = {
-                showConfirmDialog = false
+                showConfirmDeleteDialog = false
                 viewModel.deleteShopItems(state.selectedItems.map { it.id!! })
                 viewModel.clearItems()
+            }
+        )
+    }
+
+    if (showConfirmLogoutDialog) {
+        ConfirmDialog(
+            onDismissRequest = {
+                showConfirmLogoutDialog = false
+            },
+            title = stringResource(R.string.are_you_sure_you_want_to_logout),
+            description = stringResource(R.string.your_data_will_remain_unchanged),
+            confirmText = stringResource(R.string.logout),
+            icon = Icons.AutoMirrored.Outlined.Logout,
+            iconColor = Color(0xFFDC2626),
+            iconBackgroundColor = Color(0xFFFEE2E2),
+            onConfirmation = {
+                showConfirmLogoutDialog = false
+                viewModel.logout()
             }
         )
     }
@@ -283,5 +318,5 @@ private fun AnimatedShopItem(
 @Preview(showSystemUi = true, showBackground = true, device = Devices.PIXEL_7_PRO)
 @Composable
 private fun ListPagePrev() {
-    ListPage()
+    ListScreen(navController = rememberNavController())
 }

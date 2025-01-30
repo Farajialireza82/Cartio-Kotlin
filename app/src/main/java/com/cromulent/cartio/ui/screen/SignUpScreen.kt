@@ -16,7 +16,9 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +31,10 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.cromulent.cartio.CartioRoutes
+import com.cromulent.cartio.state.LoginScreenUiMode
 import com.cromulent.cartio.ui.component.ListPageTopBar
 import com.cromulent.cartio.ui.component.textField.CartioButton
 import com.cromulent.cartio.ui.component.textField.CartioTextField
@@ -38,9 +44,14 @@ import com.cromulent.cartio.viewmodel.SignupViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SignUpScreen(modifier: Modifier = Modifier) {
+fun SignUpScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
 
     val viewModel: SignupViewModel = koinViewModel<SignupViewModel>()
+
+    val state by viewModel.state.collectAsState()
 
     var fullName by remember { mutableStateOf("") }
     var emailAddress by remember { mutableStateOf("") }
@@ -67,6 +78,7 @@ fun SignUpScreen(modifier: Modifier = Modifier) {
                 .padding(vertical = 24.dp, horizontal = 48.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             CartioTextField(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
@@ -99,7 +111,7 @@ fun SignUpScreen(modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier
                     .padding(vertical = 8.dp)
-                )
+            )
 
             Spacer(modifier = Modifier.size(8.dp))
 
@@ -122,21 +134,28 @@ fun SignUpScreen(modifier: Modifier = Modifier) {
 
             Row {
                 Text(
-                    text = "Already have an account? " ,
+                    text = "Already have an account? ",
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(
-                    text = "Sign in" ,
+                    text = "Sign in",
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .clickable {
+                            navController.popBackStack()
+                            navController.navigate(CartioRoutes.LOGIN.name)
                         }
                 )
             }
 
         }
+    }
+
+    if(state.uiMode == LoginScreenUiMode.SUCCESS){
+        navController.navigate(CartioRoutes.LIST.name)
+        navController.popBackStack()
     }
 }
 
@@ -144,6 +163,8 @@ fun SignUpScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun SignUpPrev() {
     CartioTheme {
-        SignUpScreen()
+        SignUpScreen(
+            navController = rememberNavController()
+        )
     }
 }

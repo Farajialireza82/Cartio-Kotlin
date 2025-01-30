@@ -8,15 +8,15 @@ class ShopRepositoryImpl(
     private val shopApi: ShopItemApiService
 ): ShopRepository {
 
-    override suspend fun getAllShopItems(): Result<List<ShopItem>> {
+    override suspend fun getAllShopItems(token: String?): Result<List<ShopItem>> {
         return runCatching {
-            shopApi.getAllShopItems().body<List<ShopItem>>()
+            shopApi.getAllShopItems(token).body<List<ShopItem>>()
         }
     }
 
-    override suspend fun addShopItem(shopItem: ShopItem): Result<Long> {
+    override suspend fun addShopItem(token: String?, shopItem: ShopItem): Result<Long> {
         return runCatching {
-            val response = shopApi.addShopItem(shopItem)
+            val response = shopApi.addShopItem(token, shopItem)
             // Extract ID from Location header
             val locationHeader = response.headers["Location"]
             locationHeader?.let { location ->
@@ -25,27 +25,27 @@ class ShopRepositoryImpl(
         }
     }
 
-    override suspend fun editShopItem(shopItem: ShopItem): Result<Unit> {
+    override suspend fun editShopItem(token: String?, shopItem: ShopItem): Result<Unit> {
         return runCatching {
-            shopApi.editShopItem(shopItem)
+            shopApi.editShopItem(token, shopItem)
         }
     }
 
-    override suspend fun deleteShopItem(id: Long?): Result<Unit> {
+    override suspend fun deleteShopItem(token: String?, id: Long?): Result<Unit> {
         return runCatching {
-            shopApi.deleteShopItem(id)
+            shopApi.deleteShopItem(token, id)
         }
     }
 
-    override suspend fun deleteShopItems(ids: List<Long>?): Result<Unit> {
+    override suspend fun deleteShopItems(token: String?, ids: List<Long>?): Result<Unit> {
         return runCatching {
-            shopApi.deleteShopItems(ids)
+            shopApi.deleteShopItems(token, ids)
         }
     }
 
-    override suspend fun markAsBought(ids: List<Long>?): Result<Unit> {
+    override suspend fun markAsBought(token: String?, ids: List<Long>?): Result<Unit> {
         return runCatching {
-            shopApi.markAsBought(ids)
+            shopApi.markAsBought(token, ids)
         }
     }
 
