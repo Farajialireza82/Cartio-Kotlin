@@ -46,6 +46,11 @@ val Typography = Typography(
         fontFamily = yekanFont,
         fontSize = 14.sp,
         fontWeight = FontWeight.Medium
+    ),
+    bodySmall = TextStyle(
+        fontFamily = yekanFont,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Light
     )
 )
 

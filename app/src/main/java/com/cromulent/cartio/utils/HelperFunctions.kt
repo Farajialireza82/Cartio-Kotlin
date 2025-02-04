@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.core.content.ContextCompat
 import com.cromulent.cartio.R
 
 

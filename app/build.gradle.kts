@@ -87,4 +87,6 @@ dependencies {
 
     implementation("androidx.navigation:navigation-compose:2.7.4")
     implementation ("androidx.compose.material:material-icons-extended:1.5.4")
+
+    implementation("com.github.LottieFiles:dotlottie-android:0.5.0")
 }

@@ -29,12 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.cromulent.cartio.R
 import com.cromulent.cartio.ui.theme.CartioTheme
 
 @Composable
@@ -119,7 +121,7 @@ fun ConfirmDialog(
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurface
                     )

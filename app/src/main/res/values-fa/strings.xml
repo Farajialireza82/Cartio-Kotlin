@@ -2,7 +2,7 @@
 <resources>
     <string name="quantity">تعداد...</string>
     <string name="add_item">موردی بنویسید</string>
-    <string name="qty">تعداد:</string>
+    <string name="qty">تعداد</string>
     <string name="start_your_shopping_list">خرید خود را شروع کنید</string>
     <string name="add_items_you_need_to_buy_and_share_the_list_with_others">مواردی که میخواهید خریداری و به اشتراک بگذارید را بنویسید</string>
     <string name="household_groceries">لیست خرید خانه</string>
@@ -14,5 +14,30 @@
     <string name="logout">خروج</string>
     <string name="delete">حذف</string>
     <string name="this_action_cannot_be_undone">این کار قابل بازگشت نخواهد بود</string>
-    <string name="delete_items">حذف %1$s?</string>
+    <string name="delete_items">حذف %1$s؟</string>
+    <string name="create_account_agree_tos">با ساخت حساب کاربری٬ با قوانین و مقررات ما موافقت میکنید</string>
+    <string name="enter_a_name">نام خود را وارد کنید</string>
+    <string name="enter_an_email_address">یک ایمیل وارد کنید</string>
+    <string name="invalid_email_address">ایمیل نامعتبر است</string>
+    <string name="enter_a_password">رمز عبور وارد کنید</string>
+    <string name="passwords_must_contain_at_least_8_characters">رمز عبور باید حداقل 8 کاراکتر باشد</string>
+    <string name="passwords_must_contain_at_least_one_letter_and_one_number">رمز عبور باید حداقل یک حرف و یک عدد داشته باشد</string>
+    <string name="already_have_an_account">"حساب کاربری دارید؟ "</string>
+    <string name="sign_in">وارد شوید</string>
+    <string name="welcome_back">خوش آمدید</string>
+    <string name="username_or_email">نام کاربری یا ایمیل</string>
+    <string name="cancel">لغو</string>
+    <string name="full_name">نام کامل</string>
+    <string name="please_enter_your_details">اطلاعات خود را وارد کنید</string>
+    <string name="don_t_have_an_account">"حساب کاربری ندارید؟ "</string>
+    <string name="sign_up">ثبت نام کنید</string>
+    <string name="title_email">ایمیل</string>
+    <string name="create_password">رمز عبور</string>
+    <string name="confirm_password">تکرار رمز</string>
+    <string name="create_account">حساب کاربری بسازید</string>
+    <string name="join_cartio_today">به کارتیو بپیوندید</string>
+    <string name="title_password">رمز عبور</string>
+    <string name="title_create_account">ساخت حساب</string>
+    <string name="confirm_your_password">رمز خود را تکرار کنید</string>
+    <string name="passwords_not_the_same">رمز های وارد شده یکسان نیستند</string>
 </resources>

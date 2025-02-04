@@ -46,7 +46,7 @@ val md_theme_dark_onSurfaceVariant = Color(0xFFC3C8BC)
 val md_theme_dark_outline = Color(0xFF8D9286)
 
 @Composable
-fun listPageGradient(darkTheme: Boolean = false) = Brush.verticalGradient(
+fun listPageGradient(darkTheme: Boolean = isSystemInDarkTheme()) = Brush.verticalGradient(
     colors = if (darkTheme) {
         listOf(
             Color(0xFF121212),

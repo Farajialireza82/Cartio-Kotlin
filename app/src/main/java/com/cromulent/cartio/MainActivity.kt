@@ -9,9 +9,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.cromulent.cartio.ui.screen.ListScreen
-import com.cromulent.cartio.ui.screen.LoginScreen
-import com.cromulent.cartio.ui.screen.SignUpScreen
+import com.cromulent.cartio.ui.screen.shop.list.ListScreen
+import com.cromulent.cartio.ui.screen.auth.login.LoginScreen
+import com.cromulent.cartio.ui.screen.auth.signup.SignUpScreen
 import com.cromulent.cartio.ui.theme.CartioTheme
 
 class MainActivity : ComponentActivity() {
